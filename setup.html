@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Amazon S3 by meetmatt</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>Amazon S3</h1>
+        <h2>Документация и инструменты для переноса файлов на Amazon S3</h2>
+        <a href="https://github.com/meetmatt/s3" class="button"><small>View project on</small>GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+
+
+          <p><a href="index.html">Оглавление</a> | <a href="proxy.html" title="Настройка прокси">Далее</a></p>
+
+<h1>
+<a name="%D0%9F%D0%BE%D0%B4%D0%B3%D0%BE%D1%82%D0%BE%D0%B2%D0%BA%D0%B0" class="anchor" href="#%D0%9F%D0%BE%D0%B4%D0%B3%D0%BE%D1%82%D0%BE%D0%B2%D0%BA%D0%B0"></a>Подготовка</h1>
+
+<p>Все шаги перечисленные ниже производятся в панели управления <a href="https://console.aws.amazon.com">Amazon Web Services</a>.</p>
+
+<h2>
+<a name="%D0%A1%D0%BE%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5-%D0%B1%D0%B0%D0%BA%D0%B5%D1%82%D0%B0" class="anchor" href="#%D0%A1%D0%BE%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5-%D0%B1%D0%B0%D0%BA%D0%B5%D1%82%D0%B0"></a>Создание бакета</h2>
+
+<p>Заходим в консоль Амазона, переходим в настройки S3.</p>
+
+<p>Чтобы создать бакет нажимаем на <code>Create Bucket</code>:</p>
+
+<p><img src="images/01.png" alt="Create Bucket" title="Create Bucket"></p>
+
+<p>В открывшемся окне вводим название бакета и выбираем регион <code>Ireland</code> (он ближе всего к нашим серверам).</p>
+
+<p><img src="images/02.png" alt="New Bucket" title="New Bucket"></p>
+
+<p>Имя бакета должно быть уникальным, в соответствии с ним создается поддомен вида <code>bucketname.s3.amazonaws.com</code>, по которому будут доступны наши файлы. Жмем <code>Create</code>.</p>
+
+<p>Если имя бакета не уникально, то будет выведена ошибка.</p>
+
+<p>После создания новый бакет появится в списке слева.</p>
+
+<h3>
+<a name="%D0%9E%D1%82%D0%BA%D1%80%D1%8B%D1%82%D0%B8%D0%B5-%D0%BF%D1%83%D0%B1%D0%BB%D0%B8%D1%87%D0%BD%D0%BE%D0%B3%D0%BE-%D0%B4%D0%BE%D1%81%D1%82%D1%83%D0%BF%D0%B0-%D0%BD%D0%B0-%D1%87%D1%82%D0%B5%D0%BD%D0%B8%D0%B5" class="anchor" href="#%D0%9E%D1%82%D0%BA%D1%80%D1%8B%D1%82%D0%B8%D0%B5-%D0%BF%D1%83%D0%B1%D0%BB%D0%B8%D1%87%D0%BD%D0%BE%D0%B3%D0%BE-%D0%B4%D0%BE%D1%81%D1%82%D1%83%D0%BF%D0%B0-%D0%BD%D0%B0-%D1%87%D1%82%D0%B5%D0%BD%D0%B8%D0%B5"></a>Открытие публичного доступа на чтение</h3>
+
+<p>Чтобы файлы, находящиеся в бакете были публично доступны по прямой ссылке необходимо добавить глобальное разрешение в меню <code>Properties</code> выбранного бакета.</p>
+
+<p><img src="images/03.png" alt="Bucket Permissions" title="Bucket Permissions"></p>
+
+<p>По умолчанию авторизованному супер-пользователю доступны все действия с бакетом и объектами в нем.</p>
+
+<p><img src="images/04.png" alt="Bucket Permissions" title="Bucket Permissions"></p>
+
+<p>Чтобы добавить разрешение на чтение файлов для анонимных пользователей выбираем <code>Add more permissions</code>, в поле <code>Grantee</code> выставляем <code>Everyone</code> и ставим флаг <code>View Permissions</code>. Сохраняем изменения.</p>
+
+<p><img src="images/05.png" alt="Grant Everyone View Permissions" title="Allow everyone to view bucket"></p>
+
+<h2>
+<a name="%D0%9D%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B9%D0%BA%D0%B0-%D0%B4%D0%BE%D1%81%D1%82%D1%83%D0%BF%D0%B0" class="anchor" href="#%D0%9D%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B9%D0%BA%D0%B0-%D0%B4%D0%BE%D1%81%D1%82%D1%83%D0%BF%D0%B0"></a>Настройка доступа</h2>
+
+<p>Для того чтобы работать с API Amazon Web Services необходимо создать группу, выставить групповые права, создать пользователя и добавить его в группу.</p>
+
+<p>Для управления пользователями в Amazon используется сервис <code>Identity and Access Management</code> (IAM).</p>
+
+<p><img src="images/06.png" alt="Identity and Access Management" title="Identity and Access Management"></p>
+
+<h3>
+<a name="%D0%A1%D0%BE%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5-%D0%B3%D1%80%D1%83%D0%BF%D0%BF%D1%8B" class="anchor" href="#%D0%A1%D0%BE%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5-%D0%B3%D1%80%D1%83%D0%BF%D0%BF%D1%8B"></a>Создание группы</h3>
+
+<p>Создаем группу перейдя в панель управления группами IAM и нажав <code>Create New Group</code>.</p>
+
+<p><img src="images/07.png" alt="IAM Groups" title="IAM Groups"></p>
+
+<p>Вводим имя группы.</p>
+
+<p><img src="images/08.png" alt="Group name" title="Group name"></p>
+
+<p>Далее необходимо указать, какие действия и над какими объектами разрешены пользователям группы.</p>
+
+<p>Нам потребуются разрешения на получение списка файлов, чтение, загрузку, удаление и изменение прав файлов.</p>
+
+<p>Этим требованиям соответствуют права:</p>
+
+<ul>
+<li>ListBucket<br>
+</li>
+<li>GetObject<br>
+</li>
+<li>PutObject<br>
+</li>
+<li>DeleteObject<br>
+</li>
+<li>GetObjectAcl<br>
+</li>
+<li>PutObjectAcl<br>
+</li>
+</ul><p>Чтобы сгенерировать файл с правами, выбираем пункт <code>Policy Generator</code>.</p>
+
+<p><img src="images/09.png" alt="Policy Generator" title="Policy generator"></p>
+
+<p>Указываем сервис <code>Amazon S3</code> и выбираем указанные выше действия в списке <code>Actions</code>.</p>
+
+<p>В поле <code>Amazon Resource Name (ARN)</code> нужно указать путь до ресурса, в нашем случае это бакет S3.</p>
+
+<p>Название ресурса указывается в формате <code>arn:aws:SERVICE_NAME:::RESOURCE_NAME</code>,
+соответсвенно SERVICE_NAME - s3, а RESOURCE_NAME - название бакета, выбранное при создании.</p>
+
+<p>Допустим бакет называется <em>mybucket</em>, в таком случае ARN будет <em>arn:aws:s3:::mybucket</em>.</p>
+
+<p><img src="images/10.png" alt="Policy Generator Settings" title="Policy Generator Settings"></p>
+
+<p>В результате сгенерируется файл с правами, но нам необходимо добавить одну строчку, чтобы все заработало.</p>
+
+<p><img src="images/11.png" alt="Generated policy" title="Generated policy"></p>
+
+<p>В разделе <code>Resource</code> необходимо продублировать строчку с ресурсом <code>"arn:aws:s3:::RESOURCE_NAME"</code>, но добавив в конце <code>/*</code>. Таким образом указанные права будут распространяться не только на сам ресурс (бакет S3 в нашем случае), но так же и на все его содержимое (файлы). В итоге у нас должно быть два ресурса - <code>"arn:aws:s3:::RESOURCE_NAME"</code> и <code>"arn:aws:s3:::RESOURCE_NAME/*"</code>, где RESOURCE_NAME - название нашего бакета.</p>
+
+<h3>
+<a name="%D0%A1%D0%BE%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5-%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D1%82%D0%B5%D0%BB%D1%8F" class="anchor" href="#%D0%A1%D0%BE%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5-%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D1%82%D0%B5%D0%BB%D1%8F"></a>Создание пользователя</h3>
+
+<p>Переходим в раздел управления пользователями и нажимаем <code>Create New Users</code>.</p>
+
+<p><img src="images/12.png" alt="IAM Users" title="IAM Users"></p>
+
+<p>Вводим имя пользователя, убеждаемся что стоит флаг <code>Generate an access key for each user</code> и нажимаем <code>Create</code>.</p>
+
+<p><img src="images/13.png" alt="Create User" title="Create User"></p>
+
+<p>В скрытом поле указаны два ключа - <code>Access Key ID</code> и <code>Secret Access Key</code>. По сути это логин и пароль для работы с API. Сохраняем их в надежном месте.</p>
+
+<p><img src="images/14.png" alt="API Credentials" title="API Credentials"></p>
+
+<h3>
+<a name="%D0%94%D0%BE%D0%B1%D0%B0%D0%B2%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5-%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D1%82%D0%B5%D0%BB%D1%8F-%D0%B2-%D0%B3%D1%80%D1%83%D0%BF%D0%BF%D1%83" class="anchor" href="#%D0%94%D0%BE%D0%B1%D0%B0%D0%B2%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5-%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D1%82%D0%B5%D0%BB%D1%8F-%D0%B2-%D0%B3%D1%80%D1%83%D0%BF%D0%BF%D1%83"></a>Добавление пользователя в группу</h3>
+
+<p>Выбираем созданного пользователя и добавляем его в группу.</p>
+
+<p><img src="images/15.png" alt="Add user to groups" title="Add user to groups"></p>
+
+<p><img src="images/16.png" alt="Select group" title="Select group"></p>
+
+<h2>
+<a name="cloudfront" class="anchor" href="#cloudfront"></a>CloudFront</h2>
+
+<h3>
+<a name="%D0%A1%D1%85%D0%B5%D0%BC%D0%B0-%D1%80%D0%B0%D0%B1%D0%BE%D1%82%D1%8B" class="anchor" href="#%D0%A1%D1%85%D0%B5%D0%BC%D0%B0-%D1%80%D0%B0%D0%B1%D0%BE%D1%82%D1%8B"></a>Схема работы</h3>
+
+<p>CloudFront - это CDN от Amazon'а. По сути это географически распределенный файловый кеш. </p>
+
+<p>Схема его работы следующая.</p>
+
+<p>Исходный файл существует в единственном экземпляре и хранится в бакете S3, например в Ирландии. В свою очередь у нас настроен CloudFront с серверами в Северной Америке и Европе. В зависимости от того, где находится пользователь запрашивающий файл, он с помощью geo DNS попадает на ближайший к нему сервер CloudFront'а. Сервер сначала ищет файл в своем кеше, и если он находится (cache hit), то сразу отдает его пользователю. В случае, если файла в кеше нет (cache miss), то CloudFront идет к источнику (origin), в нашем случае это бакет S3, скачивает и сохраняет в кеш.</p>
+
+<p>Соответственно вместо ссылки на файл в бакете (<code>http://mybucket.s3.amazonaws.com/boobs.jpg</code>) мы должны давать пользователю ссылку на CloudFront (<code>http://adns8979ascnvhasd3.cloudfront.com/boobs.jpg</code>).</p>
+
+<h3>
+<a name="%D0%A1%D0%BE%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5-%D0%B4%D0%B8%D1%81%D1%82%D1%80%D0%B8%D0%B1%D1%83%D1%86%D0%B8%D0%B8" class="anchor" href="#%D0%A1%D0%BE%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5-%D0%B4%D0%B8%D1%81%D1%82%D1%80%D0%B8%D0%B1%D1%83%D1%86%D0%B8%D0%B8"></a>Создание дистрибуции</h3>
+
+<p>Переходим в панель управления CloudFront.</p>
+
+<p><img src="images/17.png" alt="CloudFront" title="CloudFront"></p>
+
+<p>Создаем дистрибуцию.</p>
+
+<p><img src="images/18.png" alt="Create Distribution" title="Create Distribution"></p>
+
+<p>Выбираем тип <code>Web</code>.</p>
+
+<p><img src="images/19.png" alt="Web Distribution" title="Web Distribution"></p>
+
+<p>В разделе <code>Origin Settings</code> указывается источник, где лежат исходные файлы.</p>
+
+<p>В выпадающем списке <code>Origin Domain Name</code> выбираем созданный нами бакет вида <code>BUCKET_NAME.s3.amazonaws.com</code>.</p>
+
+<p>Значение в поле <code>Origin ID</code> будет сгенерировано автоматически.</p>
+
+<p><img src="images/20.png" alt="Origin Settings" title="Origin Settings"></p>
+
+<p>Оставляем все по дефолту кроме поля <code>Price Class</code> в разделе <code>Distribution Settings</code>.</p>
+
+<p><img src="images/21.png" alt="Distribution Settings Price Class" title="Distribution Settings Price Class"></p>
+
+<p>В зависимости от требований можно выбрать в скольких регионах будут находится CDN серверы, соответственно чем больше серверов, тем выше плата за использование. Чтобы сократить стоимость укажем <code>Use Only US and Europe</code>. Если выбрать <code>Use All Edge Locations</code>, то наши файлы будут кешироваться на всех континентах. Полный список регионов указан <a href="http://aws.amazon.com/cloudfront/details/">здесь</a>.</p>
+
+<p>В поле <code>Alternate Domain Names (CNAMEs)</code> можно указать свой красивый домен, который будет использоваться в публичных ссылках на файлы, например <code>cdn.example.com</code>. Об этом чуть позже.</p>
+
+<p>Создаем дистрибуцию нажав <code>Create Distribution</code>.</p>
+
+<p>В списке мы видим, что наша дистрибуция находится в статусе <code>In Progress</code>. Когда статус будет <code>Deployed</code> мы сможем протестировать работу.</p>
+
+<p><img src="images/22.png" alt="Distributions" title="Distributions"></p>
+
+<h3>
+<a name="%D0%94%D0%BE%D0%B1%D0%B0%D0%B2%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5-%D0%BD%D0%B0%D1%88%D0%B5%D0%B3%D0%BE-%D1%81%D0%B5%D1%80%D0%B2%D0%B5%D1%80%D0%B0-%D0%B2-%D0%B4%D0%B8%D1%81%D1%82%D1%80%D0%B8%D0%B1%D1%83%D1%86%D0%B8%D1%8E" class="anchor" href="#%D0%94%D0%BE%D0%B1%D0%B0%D0%B2%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5-%D0%BD%D0%B0%D1%88%D0%B5%D0%B3%D0%BE-%D1%81%D0%B5%D1%80%D0%B2%D0%B5%D1%80%D0%B0-%D0%B2-%D0%B4%D0%B8%D1%81%D1%82%D1%80%D0%B8%D0%B1%D1%83%D1%86%D0%B8%D1%8E"></a>Добавление нашего сервера в дистрибуцию</h3>
+
+<p>Дистрибуцию нужно настроить таким образом, чтобы CloudFront в случае, если файла по какой-то причине еще нет на S3, брал его с нашего исходного сервера.</p>
+
+<p>Для этого выберем созданную дистрибуцию и отредактируем настройки нажав <code>Distribution Settings</code>.</p>
+
+<p>Во вкладке <code>General</code> указан созданный для дистрибуции домен вида <code>xxxxxxxx.cloudfront.com</code> (поле <code>Domain Name</code>).</p>
+
+<p><img src="images/23.png" alt="General Distribution Settings" title="General Distribution Settings"></p>
+
+<p>Список исходных серверов настраивается в вкладке <code>Origins</code>.</p>
+
+<p><img src="images/24.png" alt="Distribution Origins" title="Distribution Origins"></p>
+
+<p>Добавим наш сервер в качестве исходного.</p>
+
+<p><img src="images/25.png" alt="Create Origin" title="Create Origin"></p>
+
+<p>В поле <code>Origin Domain Name</code> указываем домен, по которому доступен наш сервер. Поле <code>Origin ID</code> подставится автоматически. Сохраняем нажав <code>Create</code>.</p>
+
+<p>Во вкладке <code>Behaviors</code> указаны правила, по которым CloudFront будет искать файл, если его нет в кеше. Создадим новое правило для нашего сервера.</p>
+
+<p><img src="images/26.png" alt="Distribution Behaviors" title="Distribution Behaviors"></p>
+
+<p>Поле <code>Path Pattern</code> определяет маску файла для правила. В нашем случае интересуют все файлы, поэтому указываем <code>*</code>.</p>
+
+<p><img src="images/27.png" alt="Create Distribution Behavior" title="Create Distribution Behavior"></p>
+
+<p>Это фича нужна, когда например у нас файлы .css лежат не на том же сервере, где картинки .jpg Тогда для одного сервера указываем правило *.css, для другого *.jpg. Подробнее про формат маски можно почитать <a href="http://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/distribution-web-values-specify.html#DownloadDistValuesPathPattern">здесь</a>.</p>
+
+<p>В выпадающем списке <code>Origin</code> выбираем добавленный на предыдущем шаге сервер.</p>
+
+<p>Сохраняем конфигурацию и переходим к тестированию.</p>
+
+<h2>
+<a name="%D0%A2%D0%B5%D1%81%D1%82%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5-%D0%BA%D0%BE%D0%BD%D1%84%D0%B8%D0%B3%D1%83%D1%80%D0%B0%D1%86%D0%B8%D0%B8" class="anchor" href="#%D0%A2%D0%B5%D1%81%D1%82%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5-%D0%BA%D0%BE%D0%BD%D1%84%D0%B8%D0%B3%D1%83%D1%80%D0%B0%D1%86%D0%B8%D0%B8"></a>Тестирование конфигурации</h2>
+
+<h3>
+<a name="s3cloudfront" class="anchor" href="#s3cloudfront"></a>S3+CloudFront</h3>
+
+<p>Для начала проверим, что правильно настроена связка S3+CloudFront.</p>
+
+<p>Переходим в панель управления S3, в левом меню выбираем созданный нами бакет, в выпадающем меню <code>Actions</code> выбираем <code>Upload</code>.</p>
+
+<p><img src="images/28.png" alt="Upload file to S3" title="Upload file to S3"></p>
+
+<p>Добавляем файл <code>Add Files</code>.</p>
+
+<p><img src="images/29.png" alt="Add Files" title="Add Files"></p>
+
+<p>Переходим во вкладку <code>Set Details</code> и далее в <code>Set Permissions</code> и выставляем флаг <code>Make everything public</code>, загружаем <code>Start Upload</code>.</p>
+
+<p><img src="images/30.png" alt="Make Public" title="Make Public"></p>
+
+<p>Проверяем, что файл доступен по прямой ссылке на S3 <code>http://BUCKET_NAME.s3.amazonaws.com/elephpant.png</code>, где BUCKET_NAME - название бакета.</p>
+
+<p>Дальше проверяем, что файл доступен по ссылке на CloudFront <code>xxxxxxxxxxx.cloudfront.net/elephpant.png</code>.</p>
+
+<p>Этот тест провалится, потому что у нас еще не настроен прокси. Об этом в <a href="proxy.md">следующем разделе</a>.</p>
+
+<p><a href="index.html">Оглавление</a> | <a href="proxy.html" title="Настройка прокси">Далее</a></p>
+
+</section>
+
+      </div>
+    </div>
+
+  
+  </body>
+</html>

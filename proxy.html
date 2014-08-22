@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Amazon S3 by meetmatt</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>Amazon S3</h1>
+        <h2>Документация и инструменты для переноса файлов на Amazon S3</h2>
+        <a href="https://github.com/meetmatt/s3" class="button"><small>View project on</small>GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+
+
+
+<p><a href="index.html">Оглавление</a> | <a href="setup.html" title="Подготовка">Назад</a> | <a href="tools.html" title="Инструменты">Далее</a></p>
+
+<h1>
+<a name="%D0%9D%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B9%D0%BA%D0%B0-%D0%BF%D1%80%D0%BE%D0%BA%D1%81%D0%B8" class="anchor" href="#%D0%9D%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B9%D0%BA%D0%B0-%D0%BF%D1%80%D0%BE%D0%BA%D1%81%D0%B8"></a>Настройка прокси</h1>
+
+<p>В ситуации, когда файл находится на S3, но уже не доступен на нашем сервере, CloudFront, проверив файл на нашем сервере, сразу вернет 404 ошибку и не пойдет искать его на S3.</p>
+
+<p>Этого можно избежать, проверяя в коде существование файла локально, и генерируя ссылку соответственно либо на наш сервер, либо на CDN. Но это потребует объемных изменений.</p>
+
+<p>Чтобы избежать эту проблему, нужно прописать http proxy на нашем сервере.</p>
+
+<h2>
+<a name="nginx-proxy" class="anchor" href="#nginx-proxy"></a>Nginx proxy</h2>
+
+<p>Нам необходимо, чтобы nginx сначала пытался взять файл локально, а в случае, если файла нет, проксировал запрос на S3.</p>
+
+<p>Для этого укажем путь до прокси в конфиге nginx'а в секции server:</p>
+
+<pre><code>http {
+
+    #...
+
+    server {
+        listen 80;
+        server_name example.com www.example.com;
+
+        # вместо images надо указать директорию, файлы из которой переносятся на S3
+        location ~ ^/images/(.*)$ {
+            # сначала файл берется локально и, если он не найден, выполняется директива s3
+            try_files $uri @s3;
+        }
+
+        # выполняется только если файл не найден
+        location @s3 {
+
+            # вместо example надо указать название реального бакета
+            set $s3_host 'example.s3.amazonaws.com';
+            set $s3_file '$1';
+
+            # для корректной работы необходимо выставить заголовки
+            proxy_set_header       Host $s3_host;
+            proxy_set_header       Authorization '';
+            proxy_hide_header      x-amz-id-2;
+            proxy_hide_header      x-amz-request-id;
+            proxy_hide_header      Set-Cookie;
+            proxy_ignore_headers   "Set-Cookie";
+            proxy_buffering        off;
+            proxy_intercept_errors on;
+            proxy_redirect off;
+
+            proxy_pass             http://$s3_bucket/images/$s3_file;
+        }
+
+        # остальные директивы location
+    }
+}
+</code></pre>
+
+<p>Перезапускаем конфигурацию nginx'а:</p>
+
+<pre><code>$ service nginx reload
+</code></pre>
+
+<h2>
+<a name="%D0%9F%D1%80%D0%BE%D0%B2%D0%B5%D1%80%D0%BA%D0%B0" class="anchor" href="#%D0%9F%D1%80%D0%BE%D0%B2%D0%B5%D1%80%D0%BA%D0%B0"></a>Проверка</h2>
+
+<p>Заходим в консоль управления S3. В нашем бакете создаем папку images. В нее загружаем файл, которого точно нет на нашем сервере в директории images. Открываем файл по ссылке на CloudFront. Файл должен открыться.</p>
+
+<p>В этот момент CloudFront ищет файл в своем кеше, не обнаруживает его в кеше, посылает запрос на наш сервер, nginx ищет файл локально, не обнаруживает его, отправляет запрос на S3, получает файл и отправляет его обратно CloudFront'у, тот его кеширует и отдает клиенту.</p>
+
+<p>Справедливости ради стоит заметить, что у этой схемы есть очевидный минус - наш сервер отправляет запрос на S3, чтобы забрать файл. Но делает он это только один раз, потому что все следующие разы клиенты получат ответ из кеша CloudFront'а.</p>
+
+<p>Если мы посмотрим в веб-инспектор, то увидим специальный заголовок <code>X-Cache</code>, в котором CloudFront указывает, откуда загружен файл - из кеша или из источника. Первый раз файл всегда берется из источника (<code>X-Cache: Miss from cloudfront</code>). Перезагрузив страницу в этом заголовке будет значение <code>X-Cache: Hit from cloudfront</code>.</p>
+
+<h2>
+<a name="%D0%9F%D0%B5%D1%80%D0%B5%D0%BD%D0%B0%D0%BF%D1%80%D0%B0%D0%B2%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5-%D0%B2%D0%BC%D0%B5%D1%81%D1%82%D0%BE-%D0%BF%D1%80%D0%BE%D0%BA%D1%81%D0%B8" class="anchor" href="#%D0%9F%D0%B5%D1%80%D0%B5%D0%BD%D0%B0%D0%BF%D1%80%D0%B0%D0%B2%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5-%D0%B2%D0%BC%D0%B5%D1%81%D1%82%D0%BE-%D0%BF%D1%80%D0%BE%D0%BA%D1%81%D0%B8"></a>Перенаправление вместо прокси</h2>
+
+<p>Чтобы сократить издержки на проксирование запроса от CloudFront'а до S3 и обратно, можно просто перенаправлять запрос. Конфиг в таком случае выглядит так:</p>
+
+<pre><code>http {
+
+    #...
+
+    server {
+        listen 80;
+        server_name example.com www.example.com;
+
+        location ~ ^/images/(.*)$ {
+            try_files $uri @s3redirect;
+        }
+
+        location @s3redirect {
+            return 301 http://example.s3.amazonaws.com/images/$1;       }
+
+        # остальные директивы location
+    }
+}
+</code></pre>
+
+<p>В случае, если файл не найден, nginx ответит CloudFront'у редиректом (301 Moved permanently), CloudFront в свою очередь перенаправит клиента по новому URL'у.</p>
+
+<p>Плюс - мы не тратим траффик на отправку файла CloudFront'у.</p>
+
+<p>Минус - CloudFront закеширует не сам файл, а редирект на него, соответственно клиент получит файл прямиком с S3, который находится в единственном регионе, траффик с S3 дороже и скорость обычно медленнее. Вероятно что это конфигурация в результате окажется дороже, чем использование прокси.</p>
+
+<p><a href="index.html">Оглавление</a> | <a href="setup.md" title="Подготовка">Назад</a> | <a href="tools.md" title="Инструменты">Далее</a></p>
+
+</section>
+      </div>
+    </div>
+
+  
+  </body>
+</html>

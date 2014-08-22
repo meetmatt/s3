@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Amazon S3 by meetmatt</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>Amazon S3</h1>
+        <h2>Документация и инструменты для переноса файлов на Amazon S3</h2>
+        <a href="https://github.com/meetmatt/s3" class="button"><small>View project on</small>GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+
+
+<p><a href="index.html">Оглавление</a> | <a href="proxy.html" title="Настройка прокси">Назад</a> | <a href="php.html" title="Реализация на PHP">Далее</a></p>
+
+<h1>
+<a name="%D0%98%D0%BD%D1%81%D1%82%D1%80%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D1%8B-%D0%B8-%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA%D0%B8-%D0%B4%D0%BB%D1%8F-%D1%80%D0%B0%D0%B1%D0%BE%D1%82%D1%8B-%D1%81-s3" class="anchor" href="#%D0%98%D0%BD%D1%81%D1%82%D1%80%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D1%8B-%D0%B8-%D0%B1%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA%D0%B8-%D0%B4%D0%BB%D1%8F-%D1%80%D0%B0%D0%B1%D0%BE%D1%82%D1%8B-%D1%81-s3"></a>Инструменты и библиотеки для работы с S3</h1>
+
+<h2>
+<a name="%D0%93%D1%80%D0%B0%D1%84%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B8%D0%B5-%D1%83%D1%82%D0%B8%D0%BB%D0%B8%D1%82%D1%8B" class="anchor" href="#%D0%93%D1%80%D0%B0%D1%84%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B8%D0%B5-%D1%83%D1%82%D0%B8%D0%BB%D0%B8%D1%82%D1%8B"></a>Графические утилиты</h2>
+
+<h3>
+<a name="cyberduck" class="anchor" href="#cyberduck"></a>Cyberduck</h3>
+
+<p>Легкая бесплатная программа для Windows и Mac OS X.</p>
+
+<p><a href="https://cyberduck.io/">https://cyberduck.io/</a></p>
+
+<p><img src="images/32.png" alt='"Cyberduck"' title="Cyberduck"></p>
+
+<p>Создаем <code>Новое подключение</code>, выбираем <code>S3</code>, вводим полный путь до бакета в формате <code>bucket.s3.amazonaws.com</code>, в качестве имени пользователя вводим <code>Access Key ID</code>, в качестве пароля <code>Secret Access Key</code>, полученные на этапе <a href="setup.md">подготовки</a>.</p>
+
+<h2>
+<a name="%D0%91%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA%D0%B8" class="anchor" href="#%D0%91%D0%B8%D0%B1%D0%BB%D0%B8%D0%BE%D1%82%D0%B5%D0%BA%D0%B8"></a>Библиотеки</h2>
+
+<h3>
+<a name="python" class="anchor" href="#python"></a>Python</h3>
+
+<h4>
+<a name="boto" class="anchor" href="#boto"></a>Boto</h4>
+
+<p>Boto - библиотека на Python предоставляющая интерфейс для Amazon Web Services.</p>
+
+<p>Публичный репозиторий - <a href="https://github.com/boto/boto">https://github.com/boto/boto</a></p>
+
+<p>Документация - <a href="http://docs.pythonboto.org/en/latest">http://docs.pythonboto.org/en/latest</a></p>
+
+<p>Единственное требование - Python 2.6/2.7, частично поддерживвается Python 3.3/3.4.</p>
+
+<p>Устанавливается Boto с помощью питоновского менеджера пакетов <a href="https://pip.pypa.io/en/latest/index.html">pip</a>.</p>
+
+<h5>
+<a name="%D0%A3%D1%81%D1%82%D0%B0%D0%BD%D0%BE%D0%B2%D0%BA%D0%B0-pip" class="anchor" href="#%D0%A3%D1%81%D1%82%D0%B0%D0%BD%D0%BE%D0%B2%D0%BA%D0%B0-pip"></a>Установка pip</h5>
+
+<p><strong>Aptitude (Debian and Ubuntu)</strong></p>
+
+<pre><code>$ sudo apt-get install python-pip
+</code></pre>
+
+<p><strong>Yum (CentOS, Fedora)</strong></p>
+
+<pre><code>$ sudo yum install python-pip
+</code></pre>
+
+<p><strong>FreeBSD</strong></p>
+
+<pre><code>$ cd /usr/ports/devel/py-pip/ &amp;&amp; make install clean
+</code></pre>
+
+<h5>
+<a name="%D0%A3%D1%81%D1%82%D0%B0%D0%BD%D0%B0%D0%B2%D0%BA%D0%B0-boto" class="anchor" href="#%D0%A3%D1%81%D1%82%D0%B0%D0%BD%D0%B0%D0%B2%D0%BA%D0%B0-boto"></a>Устанавка boto</h5>
+
+<pre><code>$ pip install boto
+</code></pre>
+
+<h3>
+<a name="php" class="anchor" href="#php"></a>PHP</h3>
+
+<h4>
+<a name="amazon-web-services-sdk" class="anchor" href="#amazon-web-services-sdk"></a>Amazon Web Services SDK</h4>
+
+<h2>
+<a name="%D0%9A%D0%BE%D0%BD%D1%81%D0%BE%D0%BB%D1%8C%D0%BD%D1%8B%D0%B5-%D1%83%D1%82%D0%B8%D0%BB%D0%B8%D1%82%D1%8B" class="anchor" href="#%D0%9A%D0%BE%D0%BD%D1%81%D0%BE%D0%BB%D1%8C%D0%BD%D1%8B%D0%B5-%D1%83%D1%82%D0%B8%D0%BB%D0%B8%D1%82%D1%8B"></a>Консольные утилиты</h2>
+
+<h3>
+<a name="s3put" class="anchor" href="#s3put"></a>s3put</h3>
+
+<p>Коносльная утилита для закачки файлов на S3 на Python; поставляется вместе с Boto.</p>
+
+<p>Мы ее будем использовать для переноса файлов с сервера на S3.</p>
+
+<h4>
+<a name="%D0%A3%D1%81%D1%82%D0%B0%D0%BD%D0%BE%D0%B2%D0%BA%D0%B0" class="anchor" href="#%D0%A3%D1%81%D1%82%D0%B0%D0%BD%D0%BE%D0%B2%D0%BA%D0%B0"></a>Установка</h4>
+
+<p>Тулзу можно использовать сразу после установки boto.</p>
+
+<p>Но нам необходимо не только копировать файлы на S3, но и удалять их. Текущая релизация этого не умеет, поэтому надо заменить ее <a href="https://github.com/meetmatt/s3put/blob/master/bin/s3put">моей версией</a>.</p>
+
+<p>Сначала убедимся, что исходный s3put лежит в <code>/usr/local/bin</code>. Если все окей, то заменяем его моим:</p>
+
+<pre><code>$ cd /usr/local/bin
+$ sudo cp s3put s3put.backup
+$ sudo wget https://raw.githubusercontent.com/meetmatt/s3put/master/s3put.py -O s3put
+$ sudo chmod +x s3put
+</code></pre>
+
+<p>Проверяем:</p>
+
+<pre><code>$ s3put | grep delete
+          [--header] [--region &lt;name&gt;] [-x/--delete] [--host &lt;s3_host&gt;] path [path...]
+        delete - delete local file after successfull upload 
+
+</code></pre>
+
+<h4>
+<a name="%D0%98%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5" class="anchor" href="#%D0%98%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5"></a>Использование</h4>
+
+<p>Нас интересуют параметры:</p>
+
+<ul>
+<li>
+<strong>-a/--access_key</strong> - Access Key ID</li>
+<li>
+<strong>-s/--secret_key</strong> - Secret Access Key</li>
+<li>
+<strong>-b/--bucket</strong> - название бакета</li>
+<li>
+<strong>--region</strong> - сокращенное название региона (колонка <em>Region</em> в <a href="http://docs.aws.amazon.com/general/latest/gr/rande.html#s3_region">таблице</a>)</li>
+<li>
+<strong>--delete</strong> - удалить файлы после загрузки</li>
+<li>
+<strong>--grant</strong> - изменить ACL файла</li>
+<li>
+<strong>--prefix</strong> - префикс, который будет удален из пути файла</li>
+</ul><p>Допустим мы хотим переместить фотографии юзеров из папки <code>/var/www/site/public/uploads/images</code>.</p>
+
+<p>Ссылка на файл сейчас выглядит так: <code>http://example.com/uploads/images/boobs.jpg</code>.</p>
+
+<p>Нам надо, чтобы файл был доступен по ссылке <code>http://example.s3.amazonaws.com/uploads/images/boobs.jpg</code>.</p>
+
+<p>Тогда в качестве параметра <code>prefix</code> должно быть указано <code>/var/www/site/public/</code>.</p>
+
+<p>Так выглядит вызов s3put в нашем случае:</p>
+
+<pre><code>$ s3put --access-key LUGMNMH7B372CDN1F654 \  
+        --secret-key oUkLK/9SAsU9uYwQV4oO+9iLPO3bwyVbz6yBEaaY \  
+        --bucket example \  
+        --region='eu-west-1' \  
+        --grant='public-read' \  
+        --prefix='/var/www/site/public/' \  
+        --delete \  
+        /var/www/site/public/uploads/images/
+</code></pre>
+
+<p>В случае CloudFront файл будет доступен по ссылке <code>http://xxxxxxx.cloudfront.com/uploads/images/boobs.jpg</code>.</p>
+
+<p>Если указать путь до файла, то скопируется только он, если до директории, то рекурсивно скопируются все файлы и поддиректории в ней.</p>
+
+<h4>
+<a name="%D0%9F%D1%80%D0%B8%D0%BC%D0%B5%D1%80-%D0%B8%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D1%8F" class="anchor" href="#%D0%9F%D1%80%D0%B8%D0%BC%D0%B5%D1%80-%D0%B8%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D1%8F"></a>Пример использования</h4>
+
+<p>Скачаем какой-нибудь файл во временную директорию (здесь и далее используется Linux):</p>
+
+<pre><code>$ mkdir -p /tmp/public/uploads/images
+$ wget http://a0.awsstatic.com/main/images/logos/aws_logo.png -O /tmp/public/uploads/images/boobs.png
+</code></pre>
+
+<p>Узнаем размер файла, чтобы потом сравнить с тем, что попадет на S3:</p>
+
+<pre><code>$ ls -nl /tmp/public/uploads/images/aws_logo.png | awk '{print $5}'
+6258
+</code></pre>
+
+<p>Переместим файл на S3:</p>
+
+<pre><code>$ s3put --a LUGMNMH7B372CDN1F654 -s oUkLK/9SAsU9uYwQV4oO+9iLPO3bwyVbz6yBEaaY -b example --region='eu-west-1' --grant='public-read' --prefix='/tmp/public/' --delete /tmp/public/uploads/images/
+Copying /tmp/public/uploads/images/aws_logo.png to example/uploads/images/aws_logo.png
+Upload complete
+Removing /tmp/public/uploads/images/aws_logo.png
+</code></pre>
+
+<p>Если s3put выдает ошибку <code>RequestTimeTooSkewed</code>, значит серверное время слишком расходится с временем Амазона. Синхронизируем часы по NTP:</p>
+
+<pre><code>$ sudo ntpdate 0.pool.ntp.org
+</code></pre>
+
+<p>Проверим, что файл был удален:</p>
+
+<pre><code>$ ls -l /tmp/public/uploads/images/
+total 0
+</code></pre>
+
+<p>Проверим размер файла на S3:</p>
+
+<pre><code>$ curl -I http://example.s3.amazonaws.com/uploads/images/aws_logo.png 2&gt;&amp;1 | grep Content-Length | awk '{print $2}'
+6258
+</code></pre>
+
+<p>Вместо последнего шага можно просто открыть картинку в браузере <code>http://example.s3.amazonaws.com/uploads/images/aws_logo.png</code> или в Cyberduck.</p>
+
+<p><a href="index.html">Оглавление</a> | <a href="proxy.md" title="Настройка прокси">Назад</a> | <a href="php.md" title="Реализация на PHP">Далее</a></p>
+</section>
+
+      </div>
+    </div>
+
+  
+  </body>
+</html>
