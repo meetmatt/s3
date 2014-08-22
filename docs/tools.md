@@ -1,4 +1,4 @@
-[Оглавление](/../README.md) | [Назад](proxy.md "Настройка прокси") | [Далее](php.md "Реализация на PHP")
+[Оглавление](/README.md) | [Назад](proxy.md "Настройка прокси") | [Далее](php.md "Реализация на PHP")
 
 # Инструменты и библиотеки для работы с S3
 
@@ -181,4 +181,4 @@ $ curl -I http://example.s3.amazonaws.com/uploads/images/aws_logo.png 2>&1 | gre
 
 Вместо последнего шага можно просто открыть картинку в браузере `http://example.s3.amazonaws.com/uploads/images/aws_logo.png` или в Cyberduck.
 
-[Оглавление](/../README.md) | [Назад](proxy.md "Настройка прокси") | [Далее](php.md "Реализация на PHP")
+[Оглавление](/README.md) | [Назад](proxy.md "Настройка прокси") | [Далее](php.md "Реализация на PHP")
